@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: bildblattbackend
+  name: bildblattbackend
+  namespace: wordpress-bildblatt
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bildblattbackend
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: bildblattbackend
+    spec:
+      containers:
+        - env:
+            - name: bildblattbackend_DB_HOST 
+              value: bildblattbackend-mariadb-service
+            - name: bildblattbackend_DB_USER 
+              value: bildblattbackend
+            - name: bildblattbackend_DB_NAME
+              value: bildblattbackend
+            - name: bildblattbackend_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: wp-mariacreds
+                  key: MARIADB_PASSWORD
+          image: guestros/bildblatt-backend:latest
+          name: bildblattbackend
+          ports:
+            - containerPort: 8000
+          resources:
+            requests:
+              memory: "50Mi"
+              cpu: "50m"
+            limits:
+              memory: "500Mi"
+              cpu: "500m"
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: bildblattbackend
+  name: bildblattbackend-service
+  namespace: wordpress-bildblatt
+spec:
+  ports:
+    - name: "bildblattbackend"
+      port: 8000
+      targetPort: 8000
+  selector:
+    app: bildblattbackend
+---
+

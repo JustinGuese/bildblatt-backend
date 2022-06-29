@@ -1,0 +1,7 @@
+version: "3"
+services:
+  bildblatt-backend:
+    image: guestros/bildblatt-backend:latest
+    build: .
+    ports:
+      - "8000:8000"

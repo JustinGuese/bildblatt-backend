@@ -1,0 +1,29 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: wordpress-leave-ingress
+  namespace: wordpress-bildblatt
+  annotations:
+    kubernetes.io/ingress.class: "public"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "4000m"
+    nginx.org/client-max-body-size: "4000m"
+    cert-manager.io/issuer: "letsencrypt-prod"
+    # kubernetes.io/tls-acme: "true"
+spec:
+  tls:
+  - hosts:
+    - backend.bildblatt.de
+    secretName: datafortress-tls
+  rules:
+  - host: backend.bildblatt.de
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: bildblatt-backend-service
+            port:
+              number: 8000

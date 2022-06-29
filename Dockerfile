@@ -1,4 +1,5 @@
 FROM python:slim
+RUN mkdir /tmppic
 COPY ./src/requirements.txt ./requirements.txt
 RUN pip install -r requirements.txt
 COPY ./src/app.py ./app.py

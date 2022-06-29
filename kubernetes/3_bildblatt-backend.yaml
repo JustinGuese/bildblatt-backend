@@ -1,3 +1,18 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    app: bildblattbackend
+  name: bildblattbackend-pvc
+  namespace: wordpress-bildblatt
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+status: {}
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -41,7 +56,14 @@ spec:
             limits:
               memory: "500Mi"
               cpu: "500m"
+          volumeMounts:
+            - mountPath: /tmppic/
+              name: bildblattbackend-pv
       restartPolicy: Always
+      volumes:
+        - name: bildblattbackend-pv
+          persistentVolumeClaim:
+            claimName: bildblattbackend-pvc
 ---
 apiVersion: v1
 kind: Service
